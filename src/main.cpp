@@ -9,8 +9,8 @@ using json = nlohmann::json;
 
 // For converting back and forth between radians and degrees.
 constexpr double pi() { return M_PI; }
-double deg2rad(double x) { return x * pi() / 180; }
-double rad2deg(double x) { return x * 180 / pi(); }
+//double deg2rad(double x) { return x * pi() / 180; }
+//double rad2deg(double x) { return x * 180 / pi(); }
 
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
@@ -33,12 +33,7 @@ int main()
   uWS::Hub h;
 
   PID pid;
-  // TODO: Initialize the pid variable.
-  double Kp = 0.05;
-  double Ki = 0.00065;
-  double Kd = 0.4;
-
-  pid.Init(Kp, Ki, Kd);
+  pid.Init();
 
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
@@ -54,8 +49,8 @@ int main()
         if (event == "telemetry") {
           // j[1] is the data JSON object
           double cte = std::stod(j[1]["cte"].get<std::string>());
-          double speed = std::stod(j[1]["speed"].get<std::string>());
-          double angle = std::stod(j[1]["steering_angle"].get<std::string>());
+          //double speed = std::stod(j[1]["speed"].get<std::string>());
+          //double angle = std::stod(j[1]["steering_angle"].get<std::string>());
           double steer_value;
           /*
           * TODO: Calcuate steering value here, remember the steering value is
@@ -64,7 +59,7 @@ int main()
           * another PID controller to control the speed!
           */
           pid.UpdateError(cte);
-          steer_value = -pid.Kp * pid.p_error - pid.Kd * pid.d_error - pid.Ki * pid.i_error;
+          steer_value = pid.GetSteeringAngle();
           
           // DEBUG
           //std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;

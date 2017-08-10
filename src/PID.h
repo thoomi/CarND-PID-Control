@@ -9,13 +9,24 @@ public:
   double p_error;
   double i_error;
   double d_error;
+  double total_error;
+  double best_error;
 
+  /*
+  * Count number ob past steps
+  */
+  int past_steps;
+  int optimization_index;
+  bool optimization_first_run;
   /*
   * Coefficients
   */ 
-  double Kp;
-  double Ki;
-  double Kd;
+  double params[3];
+
+  /*
+   * Coefficient change params
+   */
+  double d_params[3];
 
   /*
   * Constructor
@@ -30,7 +41,7 @@ public:
   /*
   * Initialize PID.
   */
-  void Init(double Kp, double Ki, double Kd);
+  void Init();
 
   /*
   * Update the PID error variables given cross track error.
@@ -38,9 +49,14 @@ public:
   void UpdateError(double cte);
 
   /*
-  * Calculate the total PID error.
+  * Calculate the steering angle based previously updated cross track error
   */
-  double TotalError();
+  double GetSteeringAngle();
+
+  /*
+   * Optimize parameters in a twiddle fashion
+   */
+  void TwiddleParameters();
 };
 
 #endif /* PID_H */
